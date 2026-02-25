@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     // mode: "chat" | "analyze" | "plan"
 
     const today = getTodayString();
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     // Gather context
     const [todayBlocks, todayTasks, recentJournals] = await Promise.all([
