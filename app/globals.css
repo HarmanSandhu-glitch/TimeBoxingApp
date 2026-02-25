@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f0f17;
+  --foreground: #cdd6f4;
+  --surface: #1e1e2e;
+  --surface-2: #181825;
+  --border: #313244;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --muted: #9399b2;
+  --success: #a6e3a1;
+  --warning: #f9e2af;
+  --error: #f38ba8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Time box table cell selection */
+.timebox-cell.selected {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+.timebox-cell.selecting {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Recharts tooltip */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #1e1e2e !important;
+  border: 1px solid #313244 !important;
+  border-radius: 8px !important;
+  color: #cdd6f4 !important;
+}
