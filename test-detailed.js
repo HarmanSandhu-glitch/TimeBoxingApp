@@ -1,6 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const apiKey = "AIzaSyDim896Xkm8XM-UEMAT_amQERKxbms0lfI";
+const apiKey = "";
 
 async function detailedTest() {
   try {
