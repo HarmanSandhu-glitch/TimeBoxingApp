@@ -27,6 +27,7 @@ model User {
   tasks      Task[]
   timeBlocks TimeBlock[]
   journals   JournalEntry[]
+  streak     UserStreak?
 }
 
 model Account {
@@ -66,17 +67,31 @@ model VerificationToken {
 }
 
 model Task {
-  id        String   @id @default(cuid())
-  title     String
-  priority  String   @default("medium")
-  date      String
-  color     String   @default("#6366f1")
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  priority      String   @default("medium")
+  date          String
+  color         String   @default("#6366f1")
+  category      String   @default("work")
+  isRecurring   Boolean  @default(false)
+  recurringDays String?  // JSON array of weekday numbers e.g. "[1,2,3,4,5]"
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   timeBlocks TimeBlock[]
+}
+
+model UserStreak {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  currentStreak  Int      @default(0)
+  longestStreak  Int      @default(0)
+  lastActiveDate String?
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model TimeBlock {

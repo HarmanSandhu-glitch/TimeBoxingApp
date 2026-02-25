@@ -7,10 +7,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const data = await req.json();
+  const body = await req.json();
 
   const task = await prisma.task.findFirst({ where: { id, userId: session.user.id } });
   if (!task) return NextResponse.json({ error: "Task not found" }, { status: 404 });
+
+  // Serialize recurringDays array to JSON string if provided
+  const data = { ...body };
+  if (Array.isArray(data.recurringDays)) {
+    data.recurringDays = JSON.stringify(data.recurringDays);
+  }
 
   const updated = await prisma.task.update({ where: { id }, data });
   return NextResponse.json(updated);

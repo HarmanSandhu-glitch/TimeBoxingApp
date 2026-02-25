@@ -6,6 +6,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Legend,
 } from "recharts";
+import { ActivityHeatmap } from "@/components/ActivityHeatmap";
+import { StreakWidget } from "@/components/StreakWidget";
 
 interface DailyAnalytics {
   date: string;
@@ -155,6 +157,19 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* Streaks & Badges */}
+      <div className="bg-[#1e1e2e] border border-[#313244] rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-[#cdd6f4] mb-4">Streaks & Badges</h3>
+        <StreakWidget />
+      </div>
+
+      {/* Activity Heatmap */}
+      <div className="bg-[#1e1e2e] border border-[#313244] rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-[#cdd6f4] mb-1">Activity Heatmap</h3>
+        <p className="text-xs text-[#6c7086] mb-4">Completed blocks over the last year</p>
+        <ActivityHeatmap />
+      </div>
     </div>
   );
 }

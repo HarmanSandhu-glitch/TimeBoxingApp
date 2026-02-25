@@ -102,5 +102,54 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ weekDates, dailyStats });
   }
 
+  if (type === "heatmap") {
+    // Last 365 days of activity
+    const endDate = date;
+    const startDate = new Date(date);
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    const startStr = startDate.toISOString().split("T")[0];
+
+    const blocks = await prisma.timeBlock.findMany({
+      where: {
+        userId,
+        date: { gte: startStr, lte: endDate },
+      },
+      select: { date: true, isCompleted: true, taskId: true },
+    }) as unknown as { date: string; isCompleted: boolean; taskId: string | null }[];
+
+    // Aggregate per day
+    const dayMap: Record<string, { assigned: number; completed: number }> = {};
+    for (const b of blocks) {
+      if (!dayMap[b.date]) dayMap[b.date] = { assigned: 0, completed: 0 };
+      if (b.taskId) dayMap[b.date].assigned++;
+      if (b.isCompleted) dayMap[b.date].completed++;
+    }
+
+    const heatmap = Object.entries(dayMap).map(([d, v]) => ({
+      date: d,
+      count: v.completed,
+      rate: v.assigned > 0 ? Math.round((v.completed / v.assigned) * 100) : 0,
+    }));
+
+    return NextResponse.json({ heatmap, startDate: startStr, endDate });
+  }
+
+  if (type === "category") {
+    const rawBlocks = await prisma.timeBlock.findMany({
+      where: { userId, date },
+      include: { task: true },
+    }) as unknown as (BlockData & { task: { priority: string; category: string } | null })[];
+
+    const categoryMap: Record<string, { total: number; completed: number }> = {};
+    for (const b of rawBlocks) {
+      const cat = b.task?.category || "uncategorized";
+      if (!categoryMap[cat]) categoryMap[cat] = { total: 0, completed: 0 };
+      if (b.taskId) categoryMap[cat].total++;
+      if (b.isCompleted) categoryMap[cat].completed++;
+    }
+
+    return NextResponse.json({ date, categories: categoryMap });
+  }
+
   return NextResponse.json({ error: "Invalid type" }, { status: 400 });
 }

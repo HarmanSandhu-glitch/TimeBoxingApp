@@ -8,9 +8,12 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = new URL(req.url);
   const date = searchParams.get("date");
+  const category = searchParams.get("category");
 
-  const where: Record<string, string> = { userId: session.user.id };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: Record<string, any> = { userId: session.user.id };
   if (date) where.date = date;
+  if (category) where.category = category;
 
   const tasks = await prisma.task.findMany({
     where,
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { title, priority, date, color } = await req.json();
+  const { title, priority, date, color, category, isRecurring, recurringDays } = await req.json();
   if (!title || !date) {
     return NextResponse.json({ error: "Title and date are required" }, { status: 400 });
   }
@@ -35,6 +38,9 @@ export async function POST(req: NextRequest) {
       priority: priority || "medium",
       date,
       color: color || "#6366f1",
+      category: category || "work",
+      isRecurring: isRecurring || false,
+      recurringDays: recurringDays ? JSON.stringify(recurringDays) : null,
       userId: session.user.id,
     },
   });
